@@ -154,6 +154,12 @@ input[type=radio],input[type=checkbox]{width:auto;border:none;accent-color:var(-
   .sec-label{margin-top:1rem}
 }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+#mapaTerreno{height:340px;width:100%;border-radius:3px;border:.5px solid #e0e0e0;z-index:1}
+.leaflet-container{font-family:'DM Sans',sans-serif}
+.map-captured{border:.5px solid #1a1a1a!important}
+</style>
 </head>
 <body>
 <div class="page">
@@ -284,6 +290,43 @@ input[type=radio],input[type=checkbox]{width:auto;border:none;accent-color:var(-
     <select id="topo"><option>Plano</option><option>Caimento até 1m frontal</option><option>Caimento mais de 2m frontal</option><option>Outro</option></select>
   </div>
 </div>
+
+<!-- MAPA DO TERRENO -->
+<div class="sec-label">Localização no mapa</div>
+<div style="border:.5px solid #e0e0e0;border-radius:4px;padding:14px 16px;margin-bottom:6px;background:#fafaf9">
+  <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:flex-end">
+    <div style="flex:1;min-width:200px">
+      <div class="lbl">Buscar endereço no mapa</div>
+      <input type="text" id="mapaBusca" placeholder="Ex: Rua 6, Setor Oeste, Goiânia" style="width:100%"
+        onkeydown="if(event.key==='Enter')buscarEndereco()"/>
+    </div>
+    <button onclick="buscarEndereco()" style="font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;border:1px solid #1a1a1a;background:#1a1a1a;color:#fff;border-radius:2px;cursor:pointer;white-space:nowrap">
+      Buscar
+    </button>
+    <button onclick="capturarMapa()" id="btnCapturar" style="font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;border:.5px solid #bbb;background:transparent;color:#666;border-radius:2px;cursor:pointer;white-space:nowrap">
+      Usar esta vista
+    </button>
+    <span id="mapaStatus" style="font-size:11px;color:#999;font-family:'DM Sans',sans-serif"></span>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+    <button onclick="setMapLayer('satellite')" id="btnSat" style="font-family:'DM Sans',sans-serif;font-size:10px;padding:4px 10px;border:.5px solid #1a1a1a;background:#1a1a1a;color:#fff;border-radius:2px;cursor:pointer">Satélite</button>
+    <button onclick="setMapLayer('street')" id="btnStreet" style="font-family:'DM Sans',sans-serif;font-size:10px;padding:4px 10px;border:.5px solid #bbb;background:transparent;color:#666;border-radius:2px;cursor:pointer">Mapa</button>
+    <button onclick="setMapLayer('hybrid')" id="btnHybrid" style="font-family:'DM Sans',sans-serif;font-size:10px;padding:4px 10px;border:.5px solid #bbb;background:transparent;color:#666;border-radius:2px;cursor:pointer">Híbrido</button>
+  </div>
+
+  <div id="mapaTerreno"></div>
+
+  <div id="mapaCapturado" style="display:none;margin-top:10px">
+    <div style="font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:6px">Vista capturada — será incluída no PDF</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div id="mapaInfo" style="font-size:11px;color:#555;font-family:'DM Sans',sans-serif;flex:1"></div>
+      <a id="mapaLinkGoogle" href="#" target="_blank" style="font-size:10px;color:#1a1a1a;text-decoration:underline;font-family:'DM Sans',sans-serif">Abrir no Google Maps</a>
+      <button onclick="limparCaptura()" style="font-family:'DM Sans',sans-serif;font-size:10px;padding:4px 10px;border:.5px solid #bbb;background:transparent;color:#888;border-radius:2px;cursor:pointer">Remover</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- TIPO DO TERRENO -->
 <div class="sec-label">Tipo do terreno</div>
@@ -735,7 +778,7 @@ async function lerComGemini(input){
     const mimeType = isPDF ? 'application/pdf' : file.type;
 
     // Gemini 2.0 Flash — gratuito
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
 
     const body = {
       contents:[{
@@ -851,6 +894,156 @@ function copiarPrompt(){
   });
 }
 
+// ── MAPA LEAFLET (OpenStreetMap — gratuito) ───────────────────────────────────
+let mapaObj = null;
+let mapaLayer = null;
+let mapaMarker = null;
+let mapaLatLng = null;
+let mapaCaptured = null;
+let currentLayer = 'satellite';
+
+const LAYERS = {
+  satellite: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attr: 'Esri World Imagery'
+  },
+  street: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attr: '© OpenStreetMap contributors'
+  },
+  hybrid: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attr: 'Esri World Imagery'
+  }
+};
+
+function initMapa(){
+  if(mapaObj) return;
+  mapaObj = L.map('mapaTerreno', {zoomControl:true}).setView([-16.6869, -49.2648], 14);
+  mapaLayer = L.tileLayer(LAYERS.satellite.url, {attribution: LAYERS.satellite.attr, maxZoom:20}).addTo(mapaObj);
+  mapaObj.on('moveend zoomend', ()=>{
+    if(mapaCaptured) mapaCaptured = null;
+  });
+}
+
+function setMapLayer(type){
+  if(!mapaObj) initMapa();
+  currentLayer = type;
+  if(mapaLayer) mapaObj.removeLayer(mapaLayer);
+
+  // Labels overlay for hybrid
+  if(type === 'hybrid'){
+    mapaLayer = L.tileLayer(LAYERS.satellite.url, {attribution: LAYERS.satellite.attr, maxZoom:20}).addTo(mapaObj);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      opacity: 0.4, attribution:'© OpenStreetMap'
+    }).addTo(mapaObj);
+  } else {
+    mapaLayer = L.tileLayer(LAYERS[type].url, {attribution: LAYERS[type].attr, maxZoom:20}).addTo(mapaObj);
+  }
+
+  // Update button styles
+  ['Sat','Street','Hybrid'].forEach(n=>{
+    const btn = document.getElementById('btn'+n);
+    if(btn){
+      const active = n.toLowerCase() === type;
+      btn.style.background = active ? '#1a1a1a' : 'transparent';
+      btn.style.color = active ? '#fff' : '#666';
+      btn.style.borderColor = active ? '#1a1a1a' : '#bbb';
+    }
+  });
+}
+
+async function buscarEndereco(){
+  if(!mapaObj) initMapa();
+  const query = document.getElementById('mapaBusca').value.trim();
+  if(!query){ document.getElementById('mapaStatus').textContent = 'Digite um endereço.'; return; }
+
+  document.getElementById('mapaStatus').textContent = 'Buscando...';
+
+  // Auto-complete com cidade se não tiver
+  const busca = query.toLowerCase().includes('goiânia') || query.toLowerCase().includes('goiania')
+    ? query : query + ', Goiânia, GO, Brasil';
+
+  try{
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(busca)}&limit=1&countrycodes=br`;
+    const resp = await fetch(url, {headers:{'Accept-Language':'pt-BR'}});
+    const data = await resp.json();
+
+    if(!data.length){
+      document.getElementById('mapaStatus').textContent = 'Endereço não encontrado. Tente ser mais específico.';
+      return;
+    }
+
+    const {lat, lon, display_name} = data[0];
+    mapaLatLng = [parseFloat(lat), parseFloat(lon)];
+    mapaObj.setView(mapaLatLng, 18);
+
+    if(mapaMarker) mapaObj.removeLayer(mapaMarker);
+    mapaMarker = L.marker(mapaLatLng).addTo(mapaObj)
+      .bindPopup('<span style="font-family:DM Sans,sans-serif;font-size:12px">' + display_name.split(',').slice(0,3).join(', ') + '</span>')
+      .openPopup();
+
+    document.getElementById('mapaStatus').textContent = 'Encontrado — ajuste o zoom e clique "Usar esta vista"';
+
+    // Update google maps link
+    document.getElementById('mapaLinkGoogle').href =
+      `https://www.google.com/maps?q=${mapaLatLng[0]},${mapaLatLng[1]}&t=k&z=18`;
+
+  }catch(e){
+    document.getElementById('mapaStatus').textContent = 'Erro na busca. Verifique a conexão.';
+  }
+}
+
+function capturarMapa(){
+  if(!mapaObj){ document.getElementById('mapaStatus').textContent = 'Busque um endereço primeiro.'; return; }
+  const c = mapaObj.getCenter();
+  const z = mapaObj.getZoom();
+  mapaCaptured = {lat: c.lat, lng: c.lng, zoom: z, layer: currentLayer};
+
+  const addr = document.getElementById('mapaBusca').value || 'Endereço não informado';
+  document.getElementById('mapaInfo').innerHTML =
+    '<strong style="color:#1a1a1a">' + addr.split(',').slice(0,2).join(', ') + '</strong>' +
+    '<br><span style="color:#999;font-size:10px">Zoom ' + z + ' · ' + c.lat.toFixed(6) + ', ' + c.lng.toFixed(6) + '</span>';
+  document.getElementById('mapaCapturado').style.display = 'block';
+  document.getElementById('mapaLinkGoogle').href =
+    `https://www.google.com/maps?q=${c.lat},${c.lng}&t=k&z=${z}`;
+  document.getElementById('mapaStatus').textContent = 'Vista salva — aparecerá no PDF como link.';
+  document.getElementById('btnCapturar').style.background = '#1a1a1a';
+  document.getElementById('btnCapturar').style.color = '#fff';
+}
+
+function limparCaptura(){
+  mapaCaptured = null;
+  document.getElementById('mapaCapturado').style.display = 'none';
+  document.getElementById('mapaStatus').textContent = '';
+  document.getElementById('btnCapturar').style.background = 'transparent';
+  document.getElementById('btnCapturar').style.color = '#666';
+}
+
+// Auto-busca quando endereço e setor já estão preenchidos
+function tentarAutoBusca(){
+  const rua = document.getElementById('rua')?.value?.trim();
+  const setor = document.getElementById('setorSearch')?.value?.trim();
+  if(rua && setor){
+    const campo = document.getElementById('mapaBusca');
+    if(campo && !campo.value) campo.value = rua + ', ' + setor + ', Goiânia';
+  }
+}
+
+// Init mapa quando page carrega
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    if(typeof L !== 'undefined') initMapa();
+  }, 500);
+});
+
+// Observe rua/setor changes to auto-fill busca
+['rua','setorSearch'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('change', tentarAutoBusca);
+});
+
 </script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>
