@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Estudo de Viabilidade Construtiva — Creare Arquitetura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1a1a;--ink2:#555;--ink3:#999;
+  --line:#e0e0e0;--line2:#bbb;
+  --sur:#ffffff;--sur2:#f5f5f3;
+  --ff:'DM Sans',sans-serif;--ffm:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ff);font-size:13px;color:var(--ink);background:#fff;padding:0}
+.page{max-width:960px;margin:0 auto;padding:2.5rem 2rem 4rem}
+
+/* HEADER */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between;padding:2rem 0 1.5rem;border-bottom:1.5px solid var(--ink);margin-bottom:2rem}
+.logo-mark{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:42px;margin-bottom:5px}
+.logo-cell{background:var(--ink)}
+.logo-cell.tl{height:19px;border-radius:9px 2px 2px 2px}
+.logo-cell.tr{height:19px;border-radius:2px 9px 2px 2px}
+.logo-cell.bl{height:19px;border-radius:2px 2px 2px 9px}
+.logo-cell.br{height:19px;border-radius:2px 2px 9px 2px}
+.logo-name{font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2)}
+.hdr-right{text-align:right}
+.hdr-right h1{font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+.hdr-right .date{font-family:var(--ffm);font-size:9px;color:var(--ink3);margin-top:3px}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:10px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:.5px solid var(--line)}
+.toolbar button{font-family:var(--ff);font-size:11px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;padding:8px 18px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;border-radius:2px}
+.toolbar button:hover{background:var(--sur2)}
+.toolbar button.primary{background:var(--ink);color:#fff}
+.toolbar button.primary:hover{background:#333}
+
+/* SECTIONS */
+.sec-label{font-size:8px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin:1.75rem 0 .6rem;padding-bottom:.35rem;border-bottom:.5px solid var(--line)}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.g6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+
+/* FIELDS */
+.lbl{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+input[type=text],input[type=number],select{
+  font-family:var(--ff);background:transparent;border:none;
+  border-bottom:.5px solid var(--line2);font-size:13px;font-weight:400;
+  color:var(--ink);width:100%;padding:4px 0;outline:none;
+  -webkit-appearance:none;border-radius:0
+}
+input:focus,select:focus{border-bottom-color:var(--ink)}
+input:disabled,select:disabled{opacity:.3;pointer-events:none}
+select{cursor:pointer}
+
+/* RADIO / CHECK */
+.radio-row{display:flex;flex-wrap:wrap;gap:14px;margin:4px 0}
+.radio-row label{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink2);cursor:pointer}
+input[type=radio],input[type=checkbox]{width:auto;border:none;accent-color:var(--ink);cursor:pointer}
+
+/* PAVIMENTOS */
+.pav{border:.5px solid var(--line);border-radius:3px;padding:9px 12px;margin-bottom:5px}
+.pav-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pav-name{font-size:11px;font-weight:500;color:var(--ink)}
+.pav-tag{font-size:8px;letter-spacing:.07em;text-transform:uppercase;padding:2px 5px;border:.5px solid var(--line2);border-radius:2px;color:var(--ink3)}
+.pav-cols{display:grid;grid-template-columns:80px 76px 1fr 96px 72px;gap:10px;align-items:start}
+.col-hdr-row{display:grid;grid-template-columns:80px 76px 1fr 96px 72px;gap:10px;padding:0 12px 3px}
+.ch{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.ch.c{text-align:center}
+.adisp{text-align:center}
+.adisp .v{font-size:14px;font-weight:500;font-family:var(--ffm);color:var(--ink);line-height:1.3}
+.adisp .u{font-size:8px;color:var(--ink3)}
+
+/* STAT */
+.stat{background:var(--sur2);border-radius:3px;padding:8px 10px}
+.stat .l{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+.stat .v{font-size:15px;font-weight:500;font-family:var(--ffm);color:var(--ink)}
+.stat .u{font-size:8px;color:var(--ink3)}
+
+/* TÉRREO TABLE */
+.tr-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.tr-table th{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);font-weight:400;padding:3px 6px;text-align:left;border-bottom:.5px solid var(--line)}
+.tr-table th.r{text-align:right}
+.tr-table td{padding:5px 6px;border-bottom:.5px solid var(--line);color:var(--ink2)}
+.tr-table td.lc{color:var(--ink)}
+.tr-table td.num{text-align:right;font-family:var(--ffm);font-size:12px;color:var(--ink)}
+.tr-table td.pct{text-align:right;font-family:var(--ffm);font-size:11px;color:var(--ink3);width:50px}
+.tr-table tr.tot td{border-top:.5px solid var(--ink);border-bottom:none;font-weight:500;color:var(--ink)}
+.tr-input{font-family:var(--ffm);background:transparent;border:none;border-bottom:.5px solid var(--line2);font-size:12px;color:var(--ink);width:88px;padding:2px 0;outline:none;text-align:right}
+.tr-input:focus{border-bottom-color:var(--ink)}
+
+/* TIPOLOGIAS */
+.tipo-blk{border:.5px solid var(--line);border-radius:3px;padding:10px 12px;margin-bottom:5px}
+.tipo-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tipo-disabled{opacity:.22;pointer-events:none}
+
+/* RESUMO */
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:.5px solid var(--line);border-radius:3px;overflow:hidden;margin-bottom:1.5rem}
+.res-col{padding:14px 16px}
+.res-col+.res-col{border-left:.5px solid var(--line)}
+.res-sec{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.res-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:.5px solid var(--line)}
+.res-row:last-of-type{border-bottom:none}
+.res-row .rl{font-size:11px;color:var(--ink2);flex:1}
+.res-row .rl small{font-size:9px;color:var(--ink3);display:block;margin-top:1px}
+.res-row .rv{font-size:11px;font-family:var(--ffm);font-weight:500;color:var(--ink);white-space:nowrap;margin-left:8px}
+.res-total{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 0;margin-top:6px;border-top:.5px solid var(--ink)}
+.res-total .rl{font-size:11px;font-weight:500;color:var(--ink)}
+.res-total .rv{font-size:14px;font-family:var(--ffm);font-weight:500;color:var(--ink)}
+
+/* AFASTAMENTOS */
+.afst-table{width:100%;border-collapse:collapse;font-size:11px;font-family:var(--ffm)}
+.afst-table th{font-size:8px;letter-spacing:.08em;text-transform:uppercase;font-weight:400;color:var(--ink3);padding:4px 8px;text-align:center;border-bottom:.5px solid var(--line)}
+.afst-table td{padding:3px 8px;text-align:center;border-bottom:.5px solid var(--line);color:var(--ink3)}
+.afst-table tr.active td{color:var(--ink);font-weight:500;background:var(--sur2)}
+.afst-hi{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.afst-card{border:.5px solid var(--line);border-radius:3px;padding:9px 11px}
+.afst-card .l{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+.afst-card .v{font-size:16px;font-weight:500;font-family:var(--ffm);color:var(--ink)}
+
+/* FINANCEIRO */
+.fin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.fin-card{border:.5px solid var(--line);border-radius:3px;padding:12px 14px}
+.fin-card .l{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.fin-card .v{font-size:15px;font-weight:500;font-family:var(--ffm);color:var(--ink)}
+.fin-card.accent{border-color:var(--ink)}
+
+/* SETOR */
+.setor-wrap{position:relative}
+.setor-search{font-family:var(--ff);width:100%;padding:4px 0;font-size:13px;color:var(--ink);background:transparent;border:none;border-bottom:.5px solid var(--line2);outline:none}
+.setor-search:focus{border-bottom-color:var(--ink)}
+.setor-drop{position:absolute;top:100%;left:0;right:0;background:#fff;border:.5px solid var(--line2);border-radius:3px;max-height:160px;overflow-y:auto;z-index:200;display:none;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.setor-drop.open{display:block}
+.setor-opt{padding:6px 10px;font-size:12px;cursor:pointer;color:var(--ink);border-bottom:.5px solid var(--line)}
+.setor-opt:last-child{border-bottom:none}
+.setor-opt:hover{background:var(--sur2)}
+.setor-opt mark{background:none;font-weight:500;color:var(--ink)}
+
+.divider{height:.5px;background:var(--line);margin:.6rem 0}
+
+/* PRINT */
+@media print{
+  .toolbar{display:none!important}
+  #blocoUpload{display:none!important}
+  body{padding:0}
+  .page{max-width:100%;padding:1.5rem 1.5rem 2rem}
+  .hdr{padding:1rem 0 1rem}
+  .pav,.tipo-blk,.res-grid,.fin-card,.stat,.afst-card{break-inside:avoid}
+  .sec-label{margin-top:1rem}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="primary" onclick="window.print()">
+    ↓ Exportar / Imprimir PDF
+  </button>
+  <button onclick="limpar()">Limpar campos</button>
+  <button onclick="salvarLocal()">Salvar rascunho</button>
+  <button onclick="carregarLocal()">Carregar rascunho</button>
+</div>
+
+<!-- USO DO SOLO — GEMINI AUTO-LEITURA -->
+<div id="blocoUpload" style="border:1px dashed #bbb;border-radius:4px;padding:16px 18px;margin-bottom:1.5rem;background:#fafaf9">
+  <div style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#999;margin-bottom:8px">Leitura automática — uso do solo</div>
+
+  <!-- CHAVE API -->
+  <div style="margin-bottom:12px;padding:10px 12px;background:#fff;border:.5px solid #e8e8e8;border-radius:3px">
+    <div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#999;margin-bottom:4px">Chave API Gemini <span style="font-size:9px;color:#aaa;text-transform:none;letter-spacing:0">(gratuita em aistudio.google.com)</span></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <input type="password" id="geminiKey" placeholder="AIza..." style="font-family:'DM Mono',monospace;font-size:12px;flex:1;min-width:200px;padding:4px 0;border:none;border-bottom:.5px solid #ccc;outline:none;background:transparent;color:#1a1a1a"/>
+      <button onclick="salvarChave()" style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border:.5px solid #bbb;background:transparent;color:#666;border-radius:2px;cursor:pointer">Salvar chave</button>
+      <span id="chaveStatus" style="font-size:10px;color:#999"></span>
+    </div>
+    <div style="font-size:10px;color:#bbb;margin-top:4px">A chave fica salva apenas no seu navegador.</div>
+  </div>
+
+  <!-- UPLOAD -->
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+    <label id="labelUpload" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border:1px solid #1a1a1a;border-radius:2px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-family:'DM Sans',sans-serif;background:#1a1a1a;color:#fff">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M4 6l4-4 4 4" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><path d="M2 11v2h12v-2" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Carregar uso do solo (PDF ou foto)
+      <input type="file" id="usoFile" accept="image/*,.pdf" style="display:none" onchange="lerComGemini(this)"/>
+    </label>
+    <span id="uploadStatus" style="font-size:11px;color:#999;font-family:'DM Sans',sans-serif"></span>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingBar" style="display:none;margin-bottom:10px">
+    <div style="font-size:11px;color:#888;margin-bottom:6px;font-family:'DM Sans',sans-serif">Lendo documento...</div>
+    <div style="height:2px;background:#e0e0e0;border-radius:1px;overflow:hidden">
+      <div id="loadingFill" style="height:100%;width:0%;background:#1a1a1a;border-radius:1px;transition:width .3s"></div>
+    </div>
+  </div>
+
+  <!-- PREVIEW RESULTADO -->
+  <div id="geminiPreview" style="display:none;margin-top:4px;padding:10px 12px;background:#fff;border:.5px solid #e0e0e0;border-radius:3px">
+    <div style="font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:6px">Dados extraídos do documento</div>
+    <div id="geminiResultado" style="font-size:12px;color:#555;line-height:1.9;font-family:'DM Sans',sans-serif"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="aplicarGemini()" style="font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 18px;border:1px solid #1a1a1a;background:#1a1a1a;color:#fff;border-radius:2px;cursor:pointer">Preencher formulário</button>
+      <button onclick="document.getElementById('geminiPreview').style.display='none'" style="font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 14px;border:.5px solid #bbb;background:transparent;color:#888;border-radius:2px;cursor:pointer">Descartar</button>
+    </div>
+  </div>
+
+  <!-- FALLBACK JSON MANUAL -->
+  <details style="margin-top:10px">
+    <summary style="font-size:10px;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;user-select:none">&#9656; Ou cole o JSON manualmente</summary>
+    <div style="margin-top:8px">
+      <textarea id="jsonInput" placeholder="Cole aqui o JSON retornado pelo Claude.ai ou outro modelo..." style="width:100%;height:100px;font-family:'DM Mono',monospace;font-size:11px;border:.5px solid #ccc;border-radius:3px;padding:8px;color:#333;background:#fff;resize:vertical;outline:none;line-height:1.5"></textarea>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button onclick="interpretarJSON()" style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border:.5px solid #1a1a1a;background:#1a1a1a;color:#fff;border-radius:2px;cursor:pointer">Preencher do JSON</button>
+        <span id="jsonStatus" style="font-size:10px;color:#999;align-self:center;font-family:'DM Sans',sans-serif"></span>
+      </div>
+    </div>
+  </details>
+</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <div class="logo-mark">
+      <div class="logo-cell tl"></div><div class="logo-cell tr"></div>
+      <div class="logo-cell bl"></div><div class="logo-cell br"></div>
+    </div>
+    <div class="logo-name">Creare Arquitetura</div>
+  </div>
+  <div class="hdr-right">
+    <h1>Estudo de viabilidade construtiva</h1>
+    <div class="date" id="dataHoje"></div>
+  </div>
+</div>
+
+<!-- CLIENTE -->
+<div class="sec-label">Dados do cliente</div>
+<div class="g3">
+  <div><div class="lbl">Nome</div><input type="text" id="cliente" placeholder="Nome completo"/></div>
+  <div><div class="lbl">Empresa</div><input type="text" id="empresa" placeholder="Razão social"/></div>
+  <div><div class="lbl">WhatsApp</div><input type="text" id="whatsapp" placeholder="(62) 9 0000-0000"/></div>
+</div>
+
+<!-- LOCALIZAÇÃO -->
+<div class="sec-label">Localização</div>
+<div class="g4" style="margin-bottom:10px">
+  <div><div class="lbl">Estado</div>
+    <select id="estado" onchange="onEstadoChange()">
+      <option value="GO" selected>Goiás</option><option value="DF">Distrito Federal</option>
+      <option value="MG">Minas Gerais</option><option value="SP">São Paulo</option>
+    </select>
+  </div>
+  <div><div class="lbl">Cidade</div>
+    <select id="cidade" onchange="onCidadeChange()">
+      <option value="Goiânia" selected>Goiânia</option><option value="Aparecida de Goiânia">Aparecida de Goiânia</option>
+      <option value="Anápolis">Anápolis</option><option value="Brasília">Brasília</option>
+    </select>
+  </div>
+  <div><div class="lbl">Setor / bairro</div>
+    <div class="setor-wrap">
+      <input type="text" class="setor-search" id="setorSearch" placeholder="Buscar setor..." autocomplete="off" oninput="filterSetores()" onfocus="openSetorDrop()" onblur="closeSetorDrop()"/>
+      <div class="setor-drop" id="setorDrop"></div>
+    </div>
+  </div>
+  <div><div class="lbl">Tipo da rua</div>
+    <select id="tipoRua">
+      <option value="">Nenhum</option><option value="local">Local</option><option value="coletora">Coletora</option>
+      <option value="arterial1">Arterial 1ª categoria</option><option value="arterial2">Arterial 2ª categoria</option>
+      <option value="expressa">Via expressa</option>
+    </select>
+  </div>
+</div>
+<div class="g4">
+  <div><div class="lbl">Rua / logradouro</div><input type="text" id="rua" placeholder="Nome da rua"/></div>
+  <div><div class="lbl">Lote / nº</div><input type="text" id="lote" placeholder="Ex: Lote 12 Qd 5"/></div>
+  <div><div class="lbl">Área do terreno (m²)</div><input type="number" id="areaTerreno" placeholder="0" oninput="calc()"/></div>
+  <div><div class="lbl">Topografia</div>
+    <select id="topo"><option>Plano</option><option>Caimento até 1m frontal</option><option>Caimento mais de 2m frontal</option><option>Outro</option></select>
+  </div>
+</div>
+
+<!-- TIPO DO TERRENO -->
+<div class="sec-label">Tipo do terreno</div>
+<div class="radio-row" style="margin-bottom:8px">
+  <label><input type="radio" name="tipoTerreno" value="meio" checked onchange="toggleTipoTerreno()"> Meio de quadra</label>
+  <label><input type="radio" name="tipoTerreno" value="esquina" onchange="toggleTipoTerreno()"> Esquina</label>
+</div>
+<div id="blocoMeio" class="g2">
+  <div><div class="lbl">Frente (m)</div><input type="number" id="frente" placeholder="0" oninput="calc()"/></div>
+  <div><div class="lbl">Profundidade (m)</div><input type="number" id="profund" placeholder="0" oninput="calc()"/></div>
+</div>
+<div id="blocoEsquina" style="display:none">
+  <div class="g3" style="margin-bottom:8px">
+    <div><div class="lbl">Frente 1 (m)</div><input type="number" id="frente1" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Frente 2 (m)</div><input type="number" id="frente2" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Chanfro (m)</div><input type="number" id="chanfro" placeholder="0" oninput="calc()"/></div>
+  </div>
+  <div class="g3">
+    <div><div class="lbl">Profundidade 1 (m)</div><input type="number" id="prof1" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Profundidade 2 (m)</div><input type="number" id="prof2" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Frente 3 (m)</div><input type="number" id="frente3" placeholder="0" oninput="calc()"/></div>
+  </div>
+</div>
+
+<!-- COEFICIENTE -->
+<div class="sec-label">Tipo de área e coeficiente</div>
+<div class="radio-row" style="margin-bottom:8px">
+  <label><input type="radio" name="usolo" value="sim" checked onchange="toggleUsolo()"> Possuo uso do solo recente</label>
+  <label><input type="radio" name="usolo" value="nao" onchange="toggleUsolo()"> Não possuo</label>
+</div>
+<div id="blocoUsolo">
+  <div class="g3" style="margin-bottom:8px">
+    <div><div class="lbl">Tipo de área</div>
+      <select id="catVia" onchange="autoCoef()">
+        <option value="">—</option><option value="aceleracao">Aceleração</option>
+        <option value="desaceleracao">Desaceleração</option><option value="adensamento">Adensamento básico</option>
+        <option value="sustentavel">Uso sustentável</option>
+      </select>
+    </div>
+    <div><div class="lbl">Índice</div>
+      <select id="indAprov" onchange="autoCoef()">
+        <option value="6">6× — Aceleração</option>
+        <option value="5">5× — Desaceleração</option>
+        <option value="1">1× — Adensamento básico</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+    <div id="campCoefOutro" style="display:none"><div class="lbl">Coeficiente</div><input type="number" id="coefOutro" value="4" oninput="calc()"/></div>
+  </div>
+  <div class="radio-row">
+    <label><input type="checkbox" id="tdcAtivo" onchange="calc()" style="width:auto;border:none;accent-color:var(--ink)"> TDC +1,5× <span style="font-size:9px;color:var(--ink3)">(somente aceleração)</span></label>
+  </div>
+</div>
+<div class="g3" style="margin-top:10px">
+  <div class="stat"><div class="l">Coef. total</div><div class="v" id="coefTotalDisp">—</div></div>
+  <div class="stat"><div class="l">Área aproveitamento</div><div class="v" id="areaAprov">—</div><div class="u">m²</div></div>
+  <div class="stat">
+    <div class="l">Permeabilidade</div>
+    <select id="perm" onchange="calc()" style="font-size:11px;margin-top:2px;border-bottom:.5px solid var(--line2)">
+      <option value="op1">Op. 1 — 10% verde + 5% floreira</option>
+      <option value="op2">Op. 2 — 25% floreira</option>
+    </select>
+    <div style="font-size:10px;color:var(--ink3);margin-top:4px">Verde: <span id="areaVerde">—</span> m² · Floreira: <span id="areaFloreira">—</span> m²</div>
+  </div>
+</div>
+
+<!-- PAVIMENTOS -->
+<div class="sec-label">Pavimentos</div>
+<div class="col-hdr-row"><div class="ch">% ocup.</div><div class="ch c">área m²</div><div class="ch">uso</div><div class="ch">vagas manuais</div><div class="ch c">vagas</div></div>
+
+<div id="blocoS3" class="pav">
+  <div class="pav-hdr"><input type="checkbox" id="ckS3" onchange="togglePav('S3')" style="width:auto;border:none;accent-color:var(--ink)"><label for="ckS3" class="pav-name" style="cursor:pointer">Subsolo 3</label><span class="pav-tag">subsolo</span></div>
+  <div class="pav-cols"><div><input type="number" id="pctS3" value="90" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="areaS3">—</div><div class="u">m²</div></div><div><select id="usoS3" onchange="calc()" disabled><option value="garagem" selected>Garagem</option><option value="comum">Comum</option><option value="residencial">Residencial</option><option value="comercial">Comercial</option><option value="lazer">Lazer</option></select></div><div><input type="number" id="vagasMS3" placeholder="auto" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="vagasS3">—</div></div></div>
+</div>
+<div id="blocoS2" class="pav">
+  <div class="pav-hdr"><input type="checkbox" id="ckS2" onchange="togglePav('S2')" style="width:auto;border:none;accent-color:var(--ink)"><label for="ckS2" class="pav-name" style="cursor:pointer">Subsolo 2</label><span class="pav-tag">subsolo</span></div>
+  <div class="pav-cols"><div><input type="number" id="pctS2" value="90" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="areaS2">—</div><div class="u">m²</div></div><div><select id="usoS2" onchange="calc()" disabled><option value="garagem" selected>Garagem</option><option value="comum">Comum</option><option value="residencial">Residencial</option><option value="comercial">Comercial</option><option value="lazer">Lazer</option></select></div><div><input type="number" id="vagasMS2" placeholder="auto" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="vagasS2">—</div></div></div>
+</div>
+<div id="blocoS1" class="pav">
+  <div class="pav-hdr"><input type="checkbox" id="ckS1" onchange="togglePav('S1')" style="width:auto;border:none;accent-color:var(--ink)"><label for="ckS1" class="pav-name" style="cursor:pointer">Subsolo 1</label><span class="pav-tag">subsolo</span></div>
+  <div class="pav-cols"><div><input type="number" id="pctS1" value="90" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="areaS1">—</div><div class="u">m²</div></div><div><select id="usoS1" onchange="calc()" disabled><option value="garagem" selected>Garagem</option><option value="comum">Comum</option><option value="residencial">Residencial</option><option value="comercial">Comercial</option><option value="lazer">Lazer</option></select></div><div><input type="number" id="vagasMS1" placeholder="auto" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="vagasS1">—</div></div></div>
+</div>
+
+<!-- TÉRREO -->
+<div id="blocoTR" class="pav">
+  <div class="pav-hdr"><input type="checkbox" id="ckTR" onchange="togglePav('TR')" style="width:auto;border:none;accent-color:var(--ink)"><label for="ckTR" class="pav-name" style="cursor:pointer">Térreo</label><span class="pav-tag">uso misto</span></div>
+  <div style="display:grid;grid-template-columns:80px 76px 1fr 96px 96px;gap:10px;align-items:start">
+    <div><input type="number" id="pctTR" value="100" oninput="calc()" disabled/></div>
+    <div class="adisp"><div class="v" id="areaTRdisp">—</div><div class="u">m²</div></div>
+    <div><select id="usoTR" disabled><option value="misto">Misto</option><option value="comercial">Comercial</option><option value="residencial">Residencial</option><option value="garagem">Garagem</option></select></div>
+    <div><div class="lbl">Vagas térreo</div><input type="number" id="vagasTR" placeholder="0" oninput="calc()" disabled/></div>
+    <div class="adisp"><div class="l" style="font-size:8px;color:var(--ink3)">Total vagas térreo</div><div class="v" id="vagasTRdisp" style="font-size:13px">—</div><div class="u" id="vagasTRnota" style="font-size:9px;color:var(--ink3)"></div></div>
+  </div>
+  <table class="tr-table">
+    <thead><tr><th>Divisão</th><th class="r">Área (m²)</th><th class="r">%</th></tr></thead>
+    <tbody>
+      <tr><td class="lc">Área total do térreo + fachada ativa</td><td class="num" id="trTotal">—</td><td class="pct">—</td></tr>
+      <tr><td class="lc">Áreas comuns / lobbies</td><td class="num"><input class="tr-input" type="number" id="trComum" placeholder="0" oninput="calcTR()"/></td><td class="pct" id="trComumPct">—</td></tr>
+      <tr><td class="lc">Áreas técnicas / garagem</td><td class="num"><input class="tr-input" type="number" id="trTecnica" placeholder="0" oninput="calcTR()"/></td><td class="pct" id="trTecnicaPct">—</td></tr>
+      <tr><td class="lc">Fachada ativa (comércio)</td><td class="num"><input class="tr-input" type="number" id="trFachada" placeholder="0" oninput="calcTR()"/></td><td class="pct" id="trFachadaPct">—</td></tr>
+      <tr class="tot"><td class="lc">Saldo</td><td class="num" id="trSaldo">—</td><td class="pct" id="trSaldoPct">—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="blocoM1" class="pav">
+  <div class="pav-hdr"><input type="checkbox" id="ckM1" onchange="togglePav('M1')" style="width:auto;border:none;accent-color:var(--ink)"><label for="ckM1" class="pav-name" style="cursor:pointer">Mezanino 1</label></div>
+  <div class="pav-cols"><div><input type="number" id="pctM1" value="90" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="areaM1">—</div><div class="u">m²</div></div><div><select id="usoM1" onchange="calc()" disabled><option value="garagem" selected>Garagem</option><option value="comum">Comum</option><option value="residencial">Residencial</option><option value="comercial">Comercial</option><option value="lazer">Lazer</option></select></div><div><input type="number" id="vagasMM1" placeholder="auto" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="vagasM1">—</div></div></div>
+</div>
+<div id="blocoM2" class="pav">
+  <div class="pav-hdr"><input type="checkbox" id="ckM2" onchange="togglePav('M2')" style="width:auto;border:none;accent-color:var(--ink)"><label for="ckM2" class="pav-name" style="cursor:pointer">Mezanino 2</label></div>
+  <div class="pav-cols"><div><input type="number" id="pctM2" value="90" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="areaM2">—</div><div class="u">m²</div></div><div><select id="usoM2" onchange="calc()" disabled><option value="garagem" selected>Garagem</option><option value="comum">Comum</option><option value="residencial">Residencial</option><option value="comercial">Comercial</option><option value="lazer">Lazer</option></select></div><div><input type="number" id="vagasMM2" placeholder="auto" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="vagasM2">—</div></div></div>
+</div>
+<div id="blocoM3" class="pav">
+  <div class="pav-hdr"><input type="checkbox" id="ckM3" onchange="togglePav('M3')" style="width:auto;border:none;accent-color:var(--ink)"><label for="ckM3" class="pav-name" style="cursor:pointer">Mezanino 3</label></div>
+  <div class="pav-cols"><div><input type="number" id="pctM3" value="90" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="areaM3">—</div><div class="u">m²</div></div><div><select id="usoM3" onchange="calc()" disabled><option value="garagem">Garagem</option><option value="comum">Comum</option><option value="residencial">Residencial</option><option value="comercial">Comercial</option><option value="lazer">Lazer</option></select></div><div><input type="number" id="vagasMM3" placeholder="auto" oninput="calc()" disabled/></div><div class="adisp"><div class="v" id="vagasM3">—</div></div></div>
+</div>
+
+<!-- PAVIMENTOS TIPO -->
+<div class="sec-label">Pavimentos tipo</div>
+<div class="g3" style="margin-bottom:14px">
+  <div>
+    <div class="lbl" style="margin-bottom:5px">Taxa de ocupação</div>
+    <div class="radio-row"><label><input type="radio" name="ocupTipo" value="50" checked onchange="calc()"> 50%</label><label><input type="radio" name="ocupTipo" value="40" onchange="calc()"> 40%</label><label><input type="radio" name="ocupTipo" value="outro" onchange="calc()"> Outro</label></div>
+    <input type="number" id="ocupTipoOutro" value="45" style="width:60px;margin-top:5px;display:none;font-family:var(--ffm);border-bottom:.5px solid var(--line2)" oninput="calc()"/>
+  </div>
+  <div class="stat"><div class="l">Área do pav. tipo</div><div class="v" id="areaPavTipo">—</div><div class="u">m²</div></div>
+  <div><div class="lbl">Qtd. de pavimentos tipo</div><input type="number" id="qtdPavTipo" placeholder="0" oninput="calc()"/></div>
+</div>
+
+<!-- TIPOLOGIA 1 -->
+<div class="tipo-blk">
+  <div class="tipo-hdr"><span class="pav-name">Tipologia 1</span>
+    <select id="ativoTipo1" onchange="toggleTipologia(1)" style="width:auto;min-width:80px;font-size:11px;border-bottom:.5px solid var(--line2)"><option value="0" selected>Nenhum</option><option value="1">Ativa</option></select>
+  </div>
+  <div id="camposTipo1" class="g6 tipo-disabled">
+    <div><div class="lbl">Tipo</div><select id="tipo1cat" onchange="calc()"><option value="">— nenhum —</option><option value="flat">Flat</option><option value="kitnet">Kitnet</option><option value="studio">Studio</option><option value="apto1q">Apto 1Q</option><option value="apto2q">Apto 2Q</option><option value="apto3q">Apto 3Q</option><option value="hotelaria">Hotelaria</option></select></div>
+    <div><div class="lbl">Área priv. (m²)</div><input type="number" id="privTipo1" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Área comum (m²)</div><input type="number" id="acTipo1" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Unid. / andar</div><input type="number" id="unAndarTipo1" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Suítes</div><input type="number" id="suitesTipo1" placeholder="0" oninput="calc()"/></div>
+    <div class="stat"><div class="l">Total unid.</div><div class="v" id="unTipo1Total">—</div></div>
+  </div>
+</div>
+<!-- TIPOLOGIA 2 -->
+<div class="tipo-blk">
+  <div class="tipo-hdr"><span class="pav-name">Tipologia 2</span>
+    <select id="ativoTipo2" onchange="toggleTipologia(2)" style="width:auto;min-width:80px;font-size:11px;border-bottom:.5px solid var(--line2)"><option value="0" selected>Nenhum</option><option value="1">Ativa</option></select>
+  </div>
+  <div id="camposTipo2" class="g6 tipo-disabled">
+    <div><div class="lbl">Tipo</div><select id="tipo2cat" onchange="calc()"><option value="">— nenhum —</option><option value="apto2q">Apto 2Q</option><option value="apto3q">Apto 3Q</option><option value="apto4q">Apto 4Q</option><option value="apto5q">Apto 5Q</option></select></div>
+    <div><div class="lbl">Área priv. (m²)</div><input type="number" id="privTipo2" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Área comum (m²)</div><input type="number" id="acTipo2" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Unid. / andar</div><input type="number" id="unAndarTipo2" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Suítes</div><input type="number" id="suitesTipo2" placeholder="0" oninput="calc()"/></div>
+    <div class="stat"><div class="l">Total unid.</div><div class="v" id="unTipo2Total">—</div></div>
+  </div>
+</div>
+<!-- TIPOLOGIA 3 -->
+<div class="tipo-blk">
+  <div class="tipo-hdr"><span class="pav-name">Tipologia 3</span>
+    <select id="ativoTipo3" onchange="toggleTipologia(3)" style="width:auto;min-width:80px;font-size:11px;border-bottom:.5px solid var(--line2)"><option value="0" selected>Nenhum</option><option value="1">Ativa</option></select>
+  </div>
+  <div id="camposTipo3" class="g6 tipo-disabled">
+    <div><div class="lbl">Tipo</div><select id="tipo3cat" onchange="calc()"><option value="">— nenhum —</option><option value="comercial">Comercial</option><option value="residencial">Residencial</option><option value="apto2q">Apto 2Q</option><option value="apto3q">Apto 3Q</option><option value="apto4q">Apto 4Q</option><option value="apto5q">Apto 5Q</option></select></div>
+    <div><div class="lbl">Área priv. (m²)</div><input type="number" id="privTipo3" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Área comum (m²)</div><input type="number" id="acTipo3" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Unid. / andar</div><input type="number" id="unAndarTipo3" placeholder="0" oninput="calc()"/></div>
+    <div><div class="lbl">Suítes</div><input type="number" id="suitesTipo3" placeholder="0" oninput="calc()"/></div>
+    <div class="stat"><div class="l">Total unid.</div><div class="v" id="unTipo3Total">—</div></div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px">
+  <div class="stat"><div class="l">Total de unidades</div><div class="v" id="totalUnidades">—</div></div>
+  <div class="stat"><div class="l">Vagas necessárias (+15%)</div><div class="v" id="vagasNecessarias">—</div></div>
+  <div class="stat"><div class="l">Saldo de vagas</div><div class="v" id="resSaldoVagas">—</div></div>
+</div>
+
+<!-- ÁTICO -->
+<div class="sec-label">Ático / cobertura</div>
+<div class="radio-row" style="margin-bottom:8px">
+  <label><input type="radio" name="atico" value="lazer" checked onchange="toggleAtico()"> Cobertura lazer</label>
+  <label><input type="radio" name="atico" value="tecnica" onchange="toggleAtico()"> Cobertura + áreas técnicas</label>
+</div>
+<div id="aticoCampo" style="max-width:220px"><div class="lbl">Área lazer (m²)</div><input type="number" id="areaAtico" placeholder="0" oninput="calc()"/></div>
+<div id="aticoTecnico" style="display:none;max-width:220px" class="stat"><div class="l">Área técnica (17% pav. tipo)</div><div class="v" id="areaTecnico">—</div><div class="u">m²</div></div>
+
+<!-- AFASTAMENTOS -->
+<div class="sec-label">Afastamentos — PDOT Goiânia</div>
+<div class="g3" style="margin-bottom:12px">
+  <div><div class="lbl">Altura do pavimento</div><select id="altPav" onchange="calc()"><option value="3">3,00 m</option><option value="3.5" selected>3,50 m</option><option value="4">4,00 m</option></select></div>
+  <div class="stat"><div class="l">Pavimentos computados</div><div class="v" id="pavTotal">—</div></div>
+  <div class="stat"><div class="l">Altura total</div><div class="v" id="altTotal">—</div><div class="u">m</div></div>
+</div>
+<div class="afst-hi">
+  <div class="afst-card"><div class="l">Afastamento lateral</div><div class="v" id="afLat">—</div></div>
+  <div class="afst-card"><div class="l">Afastamento fundo</div><div class="v" id="afFundo">—</div></div>
+  <div class="afst-card"><div class="l">Afastamento frente</div><div class="v" id="afFrente">—</div></div>
+</div>
+<div style="overflow-x:auto"><table class="afst-table" id="tabelaAfst"></table></div>
+
+<!-- RESUMO -->
+<div class="sec-label">Resumo de áreas</div>
+<div class="res-grid">
+  <div class="res-col">
+    <div class="res-sec">Área comum</div>
+    <div class="res-row" id="resRowS3" style="display:none"><span class="rl"><span id="resS3label">Subsolo 3</span></span><span class="rv" id="resS3">—</span></div>
+    <div class="res-row" id="resRowS2" style="display:none"><span class="rl"><span id="resS2label">Subsolo 2</span></span><span class="rv" id="resS2">—</span></div>
+    <div class="res-row" id="resRowS1" style="display:none"><span class="rl"><span id="resS1label">Subsolo 1</span></span><span class="rv" id="resS1">—</span></div>
+    <div class="res-row" id="resRowTR" style="display:none"><span class="rl"><span id="resTRlabel">Térreo</span><small id="resTRsub"></small></span><span class="rv" id="resTR">—</span></div>
+    <div class="res-row" id="resRowM1" style="display:none"><span class="rl"><span id="resMez1label">Mezanino 1</span></span><span class="rv" id="resMez1">—</span></div>
+    <div class="res-row" id="resRowM2" style="display:none"><span class="rl"><span id="resMez2label">Mezanino 2</span></span><span class="rv" id="resMez2">—</span></div>
+    <div class="res-row" id="resRowM3" style="display:none"><span class="rl"><span id="resMez3label">Mezanino 3</span></span><span class="rv" id="resMez3">—</span></div>
+    <div class="res-row"><span class="rl">Hall elevadores — pav. tipo</span><span class="rv" id="resAcTipo">—</span></div>
+    <div class="res-row"><span class="rl">Ático / cobertura</span><span class="rv" id="resAtico">—</span></div>
+    <div class="res-total"><span class="rl">Total área comum</span><span class="rv" id="resTotalComum">—</span></div>
+  </div>
+  <div class="res-col">
+    <div class="res-sec">Área privativa</div>
+    <div class="res-row" id="resRowPrivT1" style="display:none"><span class="rl"><span id="resPrivT1label">Tipologia 1</span><small id="resPrivT1sub"></small></span><span class="rv" id="resPrivT1">—</span></div>
+    <div class="res-row" id="resRowPrivT2" style="display:none"><span class="rl"><span id="resPrivT2label">Tipologia 2</span><small id="resPrivT2sub"></small></span><span class="rv" id="resPrivT2">—</span></div>
+    <div class="res-row" id="resRowPrivT3" style="display:none"><span class="rl"><span id="resPrivT3label">Tipologia 3</span><small id="resPrivT3sub"></small></span><span class="rv" id="resPrivT3">—</span></div>
+    <div class="res-total"><span class="rl">Total área privativa</span><span class="rv" id="resTotalPriv">—</span></div>
+    <div class="divider"></div>
+    <div class="res-row"><span class="rl">Relação priv / total</span><span class="rv" id="resRelPriv">—</span></div>
+    <div class="res-row"><span class="rl">Total de vagas</span><span class="rv" id="resTotalVagas">—</span></div>
+    <div class="res-total"><span class="rl">Área construída total</span><span class="rv" id="resTotal">—</span></div>
+  </div>
+</div>
+
+<!-- FINANCEIRO -->
+<div class="sec-label">Resumo financeiro</div>
+<div class="g4" style="margin-bottom:12px">
+  <div><div class="lbl">Padrão</div><select id="padrao" onchange="sugereVGV()"><option value="mcmv1">MCMV Faixa 1</option><option value="mcmv2">MCMV Faixa 2</option><option value="mcmv3">MCMV Faixa 3</option><option value="baixo">Baixo</option><option value="medio" selected>Médio</option><option value="alto">Alto</option><option value="aaa">Triplo AAA</option></select></div>
+  <div><div class="lbl">CUB — R$/m²</div><input type="number" id="cub" value="3200" oninput="calc()"/></div>
+  <div><div class="lbl">VGV estimado — R$/m² priv.</div><input type="number" id="vgvM2" value="12000" oninput="calc()"/></div>
+  <div><div class="lbl">Pesquisa de mercado — R$/m²</div><input type="number" id="pesquisaM2" value="11500" oninput="calc()"/></div>
+</div>
+<div class="fin-grid">
+  <div class="fin-card"><div class="l">VGV bruto</div><div class="v" id="vgv">—</div></div>
+  <div class="fin-card"><div class="l">Custo construção</div><div class="v" id="custoCons">—</div></div>
+  <div class="fin-card"><div class="l">Receita líquida (39%)</div><div class="v" id="recLiq">—</div></div>
+  <div class="fin-card accent"><div class="l">Margem líquida</div><div class="v" id="margem" style="font-size:20px">—</div></div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+document.getElementById('dataHoje').textContent=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+
+const SGO=["Setor Aeroporto","Setor Alto da Glória","Setor Alto do Bueno","Setor Andrade","Setor Areião","Setor Bela Vista","Setor Bueno","Setor Campinas","Setor Central","Setor Coimbra","Setor Jardim Goiás","Setor Leste Universitário","Setor Marista","Setor Morada do Sol","Setor Negrão de Lima","Setor Nova Suíça","Setor Novo Horizonte","Setor Oeste","Setor Palmeiras","Setor Pedro Ludovico","Setor Santo Antônio","Setor Santos Dumont","Setor Sul","Setor Universitário","Setor Vila Nova","Parque Amazônia","Parque Anhanguera","Parque Flamboyant","Parque Industrial","Parque Oeste Industrial","Parque Santa Cruz","Parque Tremendão","Jardim América","Jardim Atlântico","Jardim Europa","Jardim Goiás","Jardim Guanabara","Jardim Novo Mundo","Jardim Petrópolis","Jardim Planalto","Jardim Vitória","Residencial Alphaville","Residencial Buena Vista","Residencial Goiânia Golfe","Residencial Granville","Residencial Jardins","Residencial Millennium","Residencial Primavera","Residencial Rio Vermelho","Vila Abadia","Vila Aurora","Vila Boa","Vila Canaã","Vila Concórdia","Vila Esperança","Vila Finsocial","Vila Formosa","Vila Guimarães","Vila Jaraguá","Vila João Vaz","Vila Nova","Vila Pedroso","Condomínio Aldeia do Vale","Condomínio Alphaville Flamboyant","Condomínio Gran Park","Condomínio Jardins Lisboa","Condomínio Jardins Mônaco","Condomínio Jardins Valência","Condomínio Portal do Sol","Condomínio Quintas da Alvorada","Condomínio Riviera","Condomínio Vivendas Bela Vista","Bairro Feliz","Bairro Mendanha","Bairro São Francisco"].sort();
+const SMAP={"Goiânia":SGO,"Aparecida de Goiânia":["Jardim Aliança","Jardim Anápolis","Jardim Florença","Jardim Olímpico","Parque Industrial","Residencial Solar","Setor Conde dos Arcos","Setor Garavelo","Vila Brasília"],"Anápolis":["Bairro de Lourdes","Cidade Jardim","Jundiaí","Setor Central","Setor Norte","Vila Esperança","Vila Industrial"],"Brasília":["Asa Norte","Asa Sul","Cruzeiro","Gama","Guará","Lago Norte","Lago Sul","Noroeste","Park Way","Plano Piloto","Samambaia","Taguatinga"]};
+let setorAtual='',st=null;
+function getSets(){return SMAP[document.getElementById('cidade')?.value]||SGO;}
+function renderDrop(lista,q){const d=document.getElementById('setorDrop');if(!lista.length){d.innerHTML='<div class="setor-opt" style="color:#999">Nenhum resultado</div>';return;}d.innerHTML=lista.slice(0,50).map(s=>{const h=q?s.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>'):s;return`<div class="setor-opt${s===setorAtual?' selected':''}" onmousedown="selectSetor('${s.replace(/'/g,"\\'")}')"><span>${h}</span></div>`;}).join('');}
+function filterSetores(){const q=document.getElementById('setorSearch').value.trim().toLowerCase();renderDrop(getSets().filter(s=>!q||s.toLowerCase().includes(q)),q);document.getElementById('setorDrop').classList.add('open');}
+function openSetorDrop(){filterSetores();}
+function closeSetorDrop(){st=setTimeout(()=>document.getElementById('setorDrop').classList.remove('open'),180);}
+function selectSetor(s){clearTimeout(st);setorAtual=s;document.getElementById('setorSearch').value=s;document.getElementById('setorDrop').classList.remove('open');}
+function onCidadeChange(){setorAtual='';document.getElementById('setorSearch').value='';}
+function onEstadoChange(){onCidadeChange();}
+
+const AFST=[{h:4,lat:0,fund:0,frt:5},{h:7.5,lat:0,fund:0,frt:5},{h:11,lat:2,fund:2,frt:5},{h:14.5,lat:3,fund:3,frt:5},{h:18,lat:3.2,fund:3.2,frt:5},{h:21.5,lat:3.4,fund:3.4,frt:5},{h:25,lat:3.6,fund:3.6,frt:5},{h:28.5,lat:3.8,fund:3.8,frt:5},{h:32,lat:4,fund:4,frt:5},{h:35.5,lat:4.2,fund:4.2,frt:5},{h:39,lat:4.4,fund:4.4,frt:5},{h:42.5,lat:4.6,fund:4.6,frt:5},{h:46,lat:4.8,fund:4.8,frt:5},{h:49.5,lat:5,fund:5,frt:5},{h:53,lat:5.2,fund:5.2,frt:5},{h:56.5,lat:5.4,fund:5.4,frt:5},{h:60,lat:5.6,fund:5.6,frt:5},{h:63.5,lat:5.8,fund:5.8,frt:5},{h:67,lat:6,fund:6,frt:6},{h:70.5,lat:6.2,fund:6.2,frt:6},{h:74,lat:6.4,fund:6.4,frt:6},{h:77.5,lat:6.6,fund:6.6,frt:6},{h:81,lat:6.8,fund:6.8,frt:6},{h:84.5,lat:7,fund:7,frt:6},{h:88,lat:7.2,fund:7.2,frt:6},{h:91.5,lat:7.4,fund:7.4,frt:6},{h:95,lat:7.6,fund:7.6,frt:8},{h:98.5,lat:7.8,fund:7.8,frt:8},{h:102,lat:8,fund:8,frt:8},{h:105.5,lat:8.2,fund:8.2,frt:8},{h:109,lat:8.4,fund:8.4,frt:10}];
+function getAfst(h){if(h<=109){let b=AFST[0];for(let r of AFST)if(h>=r.h)b=r;return b;}const e=Math.ceil((h-109)/3.5)*0.2;return{h,lat:8.4+e,fund:8.4+e,frt:10+e};}
+function buildTable(ah){const tb=document.getElementById('tabelaAfst');let r='<tr><th>Altura (m)</th><th>Lateral (m)</th><th>Fundo (m)</th><th>Frente (m)</th></tr>';for(let i=0;i<AFST.length;i++){const a=AFST[i],nx=AFST[i+1],act=(ah>0&&ah>=a.h&&(!nx||ah<nx.h))?'class="active"':'';r+=`<tr ${act}><td>${a.h.toFixed(2)}</td><td>${a.lat===0?'—':a.lat.toFixed(2)}</td><td>${a.fund===0?'—':a.fund.toFixed(2)}</td><td>${a.frt.toFixed(2)}</td></tr>`;}r+=`<tr><td>Acima de 109</td><td colspan="3">+0,20 m / 3,50 m</td></tr>`;tb.innerHTML=r;}
+
+function n(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function s(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function ck(id){return document.getElementById(id)?.checked||false;}
+function rv(nm){const e=document.querySelector(`input[name="${nm}"]:checked`);return e?e.value:'';}
+function gv(id){return document.getElementById(id)?.value||'';}
+function fN(x){if(x===null||x===undefined||isNaN(x))return'—';return Math.round(x).toLocaleString('pt-BR');}
+function fD(x,d=2){return isNaN(x)?'—':x.toFixed(d).replace('.',',');}
+function fBRL(x){if(!x)return'—';if(x>=1e6)return'R$ '+(x/1e6).toFixed(2).replace('.',',')+'M';return'R$ '+Math.round(x).toLocaleString('pt-BR');}
+function fPct(x){if(isNaN(x))return'—';return fD(x)+'%';}
+const TIPO_NOMES={'flat':'Flat','kitnet':'Kitnet','studio':'Studio','apto1q':'Apto 1 quarto','apto2q':'Apto 2 quartos','apto3q':'Apto 3 quartos','apto4q':'Apto 4 quartos','apto5q':'Apto 5 quartos','hotelaria':'Hotelaria','comercial':'Comercial','residencial':'Residencial',''  :'—'};
+const USO_NOMES={'garagem':'garagem','comum':'área comum','residencial':'residencial','comercial':'comercial','lazer':'lazer','misto':'uso misto'};
+function tipoLabel(catId,privId,suitesId){const cat=gv(catId),priv=n(privId),suites=n(suitesId);let nm=TIPO_NOMES[cat]||cat;let sub=priv>0?priv.toLocaleString('pt-BR')+' m² priv.':'';if(suites>0)sub+=(sub?' · ':'')+suites+' suíte'+(suites>1?'s':'');return{nm,sub};}
+
+function toggleTipoTerreno(){const e=rv('tipoTerreno')==='esquina';document.getElementById('blocoMeio').style.display=e?'none':'grid';document.getElementById('blocoEsquina').style.display=e?'block':'none';calc();}
+function toggleUsolo(){document.getElementById('blocoUsolo').style.display=rv('usolo')==='sim'?'block':'none';}
+function autoCoef(){const cat=gv('catVia'),sel=document.getElementById('indAprov');if(cat==='adensamento'||cat==='sustentavel')sel.value='1';else if(cat==='aceleracao')sel.value='6';else if(cat==='desaceleracao')sel.value='5';const tdc=document.getElementById('tdcAtivo');tdc.disabled=(cat!=='aceleracao');if(cat!=='aceleracao')tdc.checked=false;document.getElementById('campCoefOutro').style.display=sel.value==='outro'?'block':'none';calc();}
+function togglePav(id){const cb=document.getElementById('ck'+id);const bloco=document.getElementById('bloco'+id);if(!bloco)return;bloco.querySelectorAll('input:not([type=checkbox]),select').forEach(f=>f.disabled=!cb.checked);calc();}
+function toggleAtico(){const laz=rv('atico')==='lazer';document.getElementById('aticoCampo').style.display=laz?'block':'none';document.getElementById('aticoTecnico').style.display=laz?'none':'block';calc();}
+function toggleTipologia(n){const ativo=gv('ativoTipo'+n)==='1';document.getElementById('camposTipo'+n).classList.toggle('tipo-disabled',!ativo);if(!ativo){for(let i=n+1;i<=3;i++){const sel=document.getElementById('ativoTipo'+i);if(sel){sel.value='0';document.getElementById('camposTipo'+i)?.classList.add('tipo-disabled');}}}calc();}
+function sugereVGV(){const map={mcmv1:5000,mcmv2:7000,mcmv3:9000,baixo:8000,medio:12000,alto:18000,aaa:28000};document.getElementById('vgvM2').value=map[gv('padrao')]||12000;calc();}
+function showRow(id,show){const e=document.getElementById(id);if(e)e.style.display=show?'flex':'none';}
+
+function calcTR(){
+  const at=n('areaTerreno'),aTR=ck('ckTR')?at*(n('pctTR')/100):0,fachada=n('trFachada'),total=aTR+fachada;
+  const com=n('trComum'),tec=n('trTecnica'),saldo=total-com-tec-fachada;
+  s('trTotal',fN(total));s('trComumPct',total>0?fD(com/total*100)+'%':'—');s('trTecnicaPct',total>0?fD(tec/total*100)+'%':'—');s('trFachadaPct',total>0?fD(fachada/total*100)+'%':'—');s('trSaldo',fN(saldo));s('trSaldoPct',total>0?fD(saldo/total*100)+'%':'—');
+}
+
+function calc(){
+  const at=n('areaTerreno');
+  let coef=6;const ind=gv('indAprov');if(ind==='1')coef=1;else if(ind==='6')coef=6;else if(ind==='5')coef=5;else if(ind==='outro')coef=n('coefOutro');
+  const tdc=ck('tdcAtivo')?1.5:0,coefTot=coef+tdc;
+  s('coefTotalDisp',coefTot.toFixed(1)+'×');s('areaAprov',fN(at*coefTot));
+  const pOp=gv('perm');s('areaVerde',fN(pOp==='op1'?at*0.1:0));s('areaFloreira',fN(pOp==='op1'?at*0.05:at*0.25));
+  function calcSub(id,vmId){const active=ck('ck'+id),area=active?at*(n('pct'+id)/100):0,usoVal=gv('uso'+id),garagem=usoVal==='garagem',man=document.getElementById(vmId)?.value,vagas=active&&garagem?(man&&man!==''?parseInt(man):Math.floor(area/28)):0;s('area'+id,active?fN(area):'—');s('vagas'+id,active&&garagem?fN(vagas):'—');return{area,vagas,active,uso:usoVal};}
+  const S3=calcSub('S3','vagasMS3'),S2=calcSub('S2','vagasMS2'),S1=calcSub('S1','vagasMS1');
+  function calcMez(id,vmId){const active=ck('ck'+id),area=active?at*(n('pct'+id)/100):0,usoVal=gv('uso'+id),garagem=usoVal==='garagem',man=document.getElementById(vmId)?.value,vagas=active&&garagem?(man&&man!==''?parseInt(man):Math.floor(area/28)):0;s('area'+id,active?fN(area):'—');s('vagas'+id,active&&garagem?fN(vagas):'—');return{area,vagas,active,uso:usoVal};}
+  const M1=calcMez('M1','vagasMM1'),M2=calcMez('M2','vagasMM2'),M3=calcMez('M3','vagasMM3');
+  const trAct=ck('ckTR'),aTR=trAct?at*(n('pctTR')/100):0,trFachada=n('trFachada');
+  s('areaTRdisp',trAct?fN(aTR):'—');calcTR();
+  const qtdPav=n('qtdPavTipo'),t1a=gv('ativoTipo1')==='1',t2a=gv('ativoTipo2')==='1',t3a=gv('ativoTipo3')==='1';
+  const unT1=t1a?Math.round(n('unAndarTipo1')*qtdPav):0,unT2=t2a?Math.round(n('unAndarTipo2')*qtdPav):0,unT3=t3a?Math.round(n('unAndarTipo3')*qtdPav):0,totalUn=unT1+unT2+unT3;
+  s('unTipo1Total',t1a?fN(unT1):'—');s('unTipo2Total',t2a?fN(unT2):'—');s('unTipo3Total',t3a?fN(unT3):'—');s('totalUnidades',fN(totalUn));
+  const vagasExtrasAuto=totalUn>100?3:2,vagasTRmanual=trAct?n('vagasTR'):0,vagasTRtotal=trAct?vagasTRmanual+vagasExtrasAuto:0;
+  s('vagasTRdisp',trAct?fN(vagasTRtotal):'—');s('vagasTRnota',trAct?vagasExtrasAuto+' ext. obrig.'+(totalUn>100?' (+1 >100un)':''):'');
+  const vagasNec=Math.ceil(totalUn*1.15);s('vagasNecessarias',fN(vagasNec));
+  const ocupSel=rv('ocupTipo');let ocupPct=ocupSel==='40'?40:ocupSel==='outro'?n('ocupTipoOutro'):50;document.getElementById('ocupTipoOutro').style.display=ocupSel==='outro'?'inline':'none';
+  const areaPT=at*(ocupPct/100);s('areaPavTipo',fN(areaPT));
+  const privT1=t1a?n('privTipo1')*unT1:0,privT2=t2a?n('privTipo2')*unT2:0,privT3=t3a?n('privTipo3')*unT3:0,privAptos=privT1+privT2+privT3;
+  const acT1=t1a?n('acTipo1'):0,acT2=t2a?n('acTipo2'):0,acT3=t3a?n('acTipo3'):0,acTipoTotal=(acT1+acT2+acT3)*qtdPav;
+  let areaAt=rv('atico')==='lazer'?n('areaAtico'):areaPT*0.17;if(rv('atico')==='tecnica')s('areaTecnico',fN(areaAt));
+  const mezCount=[M1,M2,M3].filter(m=>m.active).length,pavTotCount=qtdPav+mezCount+(trAct?1:0)+(areaAt>0?1:0),altH=n('altPav'),altTot=pavTotCount*altH;
+  s('pavTotal',fN(pavTotCount));s('altTotal',fD(altTot,1));
+  const af=getAfst(altTot);s('afLat',af.lat===0?'—':fD(af.lat)+' m');s('afFundo',af.fund===0?'—':fD(af.fund)+' m');s('afFrente',fD(af.frt)+' m');buildTable(altTot);
+  const totalComum=S3.area+S2.area+S1.area+aTR+M1.area+M2.area+M3.area+acTipoTotal+areaAt,totalPriv=privAptos,totalConstr=totalPriv+totalComum,relPriv=totalConstr>0?totalPriv/totalConstr:0;
+  showRow('resRowS3',S3.active);if(S3.active){s('resS3label','Subsolo 3 — '+USO_NOMES[S3.uso]);s('resS3',fN(S3.area)+' m²');}
+  showRow('resRowS2',S2.active);if(S2.active){s('resS2label','Subsolo 2 — '+USO_NOMES[S2.uso]);s('resS2',fN(S2.area)+' m²');}
+  showRow('resRowS1',S1.active);if(S1.active){s('resS1label','Subsolo 1 — '+USO_NOMES[S1.uso]);s('resS1',fN(S1.area)+' m²');}
+  showRow('resRowTR',trAct);if(trAct){s('resTRlabel','Térreo — '+USO_NOMES[gv('usoTR')]);s('resTRsub',trFachada>0?'incl. fachada ativa '+fN(trFachada)+' m²':'');s('resTR',fN(aTR+trFachada)+' m²');}
+  showRow('resRowM1',M1.active);if(M1.active){s('resMez1label','Mezanino 1 — '+USO_NOMES[M1.uso]);s('resMez1',fN(M1.area)+' m²');}
+  showRow('resRowM2',M2.active);if(M2.active){s('resMez2label','Mezanino 2 — '+USO_NOMES[M2.uso]);s('resMez2',fN(M2.area)+' m²');}
+  showRow('resRowM3',M3.active);if(M3.active){s('resMez3label','Mezanino 3 — '+USO_NOMES[M3.uso]);s('resMez3',fN(M3.area)+' m²');}
+  s('resAcTipo',fN(acTipoTotal)+' m²');s('resAtico',fN(areaAt)+' m²');s('resTotalComum',fN(totalComum)+' m²');
+  if(t1a&&privT1>0){const{nm,sub}=tipoLabel('tipo1cat','privTipo1','suitesTipo1');s('resPrivT1label',nm);s('resPrivT1sub',sub);s('resPrivT1',fN(privT1)+' m²');}showRow('resRowPrivT1',t1a&&privT1>0);
+  if(t2a&&privT2>0){const{nm,sub}=tipoLabel('tipo2cat','privTipo2','suitesTipo2');s('resPrivT2label',nm);s('resPrivT2sub',sub);s('resPrivT2',fN(privT2)+' m²');}showRow('resRowPrivT2',t2a&&privT2>0);
+  if(t3a&&privT3>0){const{nm,sub}=tipoLabel('tipo3cat','privTipo3','suitesTipo3');s('resPrivT3label',nm);s('resPrivT3sub',sub);s('resPrivT3',fN(privT3)+' m²');}showRow('resRowPrivT3',t3a&&privT3>0);
+  s('resTotalPriv',fN(totalPriv)+' m²');s('resRelPriv',fPct(relPriv*100));s('resTotal',fN(totalConstr)+' m²');
+  const vagasGar=S3.vagas+S2.vagas+S1.vagas+M1.vagas+M2.vagas+M3.vagas+vagasTRtotal;s('resTotalVagas',fN(vagasGar));s('resSaldoVagas',(vagasGar-vagasNec>=0?'+':'')+fN(vagasGar-vagasNec));
+  const vgv=totalPriv*n('vgvM2'),custo=totalConstr*n('cub');s('vgv',fBRL(vgv));s('custoCons',fBRL(custo));s('recLiq',fBRL(vgv*0.39));s('margem',fPct(vgv>0?((vgv-custo)/vgv)*100:0));
+}
+
+// SALVAR / CARREGAR localStorage
+const CAMPOS_TEXT=['cliente','empresa','whatsapp','rua','lote','areaTerreno','frente','profund','frente1','frente2','chanfro','prof1','prof2','frente3','coefOutro','qtdPavTipo','privTipo1','acTipo1','unAndarTipo1','suitesTipo1','privTipo2','acTipo2','unAndarTipo2','suitesTipo2','privTipo3','acTipo3','unAndarTipo3','suitesTipo3','areaAtico','cub','vgvM2','pesquisaM2','pctS3','pctS2','pctS1','pctTR','vagasTR','trComum','trTecnica','trFachada','pctM1','pctM2','pctM3','vagasMS3','vagasMS2','vagasMS1','vagasMM1','vagasMM2','vagasMM3','ocupTipoOutro'];
+const CAMPOS_SELECT=['estado','cidade','tipoRua','topo','catVia','indAprov','perm','ativoTipo1','tipo1cat','ativoTipo2','tipo2cat','ativoTipo3','tipo3cat','padrao','altPav','usoS3','usoS2','usoS1','usoTR','usoM1','usoM2','usoM3'];
+const CAMPOS_CHECK=['ckS3','ckS2','ckS1','ckTR','ckM1','ckM2','ckM3','tdcAtivo'];
+const CAMPOS_RADIO=['tipoTerreno','usolo','ocupTipo','atico'];
+function salvarLocal(){const d={};CAMPOS_TEXT.forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});CAMPOS_SELECT.forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});CAMPOS_CHECK.forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.checked;});CAMPOS_RADIO.forEach(nm=>{const e=document.querySelector(`input[name="${nm}"]:checked`);if(e)d['radio_'+nm]=e.value;});d['setorSearch']=document.getElementById('setorSearch').value;localStorage.setItem('creare_viab',JSON.stringify(d));alert('Rascunho salvo!');}
+function carregarLocal(){const raw=localStorage.getItem('creare_viab');if(!raw){alert('Nenhum rascunho salvo.');return;}const d=JSON.parse(raw);CAMPOS_TEXT.forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});CAMPOS_SELECT.forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});CAMPOS_CHECK.forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.checked=d[id];});CAMPOS_RADIO.forEach(nm=>{const val=d['radio_'+nm];if(val){const e=document.querySelector(`input[name="${nm}"][value="${val}"]`);if(e)e.checked=true;}});if(d['setorSearch'])document.getElementById('setorSearch').value=d['setorSearch'];toggleTipoTerreno();toggleUsolo();toggleAtico();for(let i=1;i<=3;i++)toggleTipologia(i);['S3','S2','S1','TR','M1','M2','M3'].forEach(id=>{const cb=document.getElementById('ck'+id);if(cb&&cb.checked)togglePav(id);});calc();alert('Rascunho carregado!');}
+function limpar(){if(confirm('Limpar todos os campos?')){CAMPOS_TEXT.forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});calc();}}
+
+document.querySelectorAll('input[name="ocupTipo"]').forEach(r=>r.addEventListener('change',calc));
+document.getElementById('perm').addEventListener('change',calc);
+calc();buildTable(0);
+
+// ── LEITURA DE USO DO SOLO — GEMINI ──────────────────────────────────────────
+let dadosGemini = {};
+let dadosExtraidos = {};
+
+const TIPO_AREA_LABELS={aceleracao:'Aceleração',desaceleracao:'Desaceleração',adensamento:'Adensamento básico',sustentavel:'Uso sustentável'};
+const TIPO_VIA_LABELS={local:'Local',coletora:'Coletora',arterial1:'Arterial 1ª categoria',arterial2:'Arterial 2ª categoria',expressa:'Via expressa'};
+
+const PROMPT_EXTRACAO = `Você é especialista em documentos de uso do solo da Prefeitura de Goiânia.
+Analise o documento e extraia os dados retornando APENAS JSON puro, sem markdown, sem texto adicional:
+
+{
+  "logradouro": "nome da rua ou null",
+  "bairro_setor": "nome do bairro/setor ou null",
+  "area_terreno_m2": numero ou null,
+  "testada_m": numero ou null,
+  "profundidade_m": numero ou null,
+  "tipo_area": "aceleracao" ou "desaceleracao" ou "adensamento" ou "sustentavel" ou null,
+  "indice_aproveitamento": numero (ex: 6, 5, 1) ou null,
+  "tdc_permitido": true ou false ou null,
+  "tipo_via": "local" ou "coletora" ou "arterial1" ou "arterial2" ou "expressa" ou null,
+  "observacoes": "numero do processo, validade, quadra, lote e outras informacoes relevantes ou null"
+}
+
+Regras de mapeamento:
+- Área de Desaceleração de Densidade (ADD) = "desaceleracao"
+- Área de Aceleração de Densidade = "aceleracao"
+- Adensamento básico = "adensamento"
+- Uso sustentável = "sustentavel"
+- Via Local = "local", Coletora = "coletora"
+- Arterial 1ª categoria = "arterial1", Arterial 2ª = "arterial2"
+- Via Expressa = "expressa"
+- Fração ideal 5x = indice 5, 6x = indice 6, 1x = indice 1
+- TDC só é permitido em áreas de aceleração
+Responda APENAS o JSON.`;
+
+function salvarChave(){
+  const k = document.getElementById('geminiKey').value.trim();
+  if(!k){document.getElementById('chaveStatus').textContent='Digite a chave.';return;}
+  localStorage.setItem('gemini_key', k);
+  document.getElementById('chaveStatus').textContent = 'Chave salva!';
+  document.getElementById('chaveStatus').style.color = '#27ae60';
+  setTimeout(()=>document.getElementById('chaveStatus').textContent='', 2000);
+}
+
+function getGeminiKey(){
+  const campo = document.getElementById('geminiKey').value.trim();
+  if(campo) return campo;
+  return localStorage.getItem('gemini_key') || '';
+}
+
+function setStatus(msg, cor){
+  const el = document.getElementById('uploadStatus');
+  el.textContent = msg;
+  el.style.color = cor || '#999';
+}
+
+function animateLoading(){
+  const fill = document.getElementById('loadingFill');
+  document.getElementById('loadingBar').style.display = 'block';
+  let w = 0;
+  const iv = setInterval(()=>{
+    w = w < 85 ? w + (Math.random() * 8) : w + 0.3;
+    if(w > 92) w = 92;
+    fill.style.width = w + '%';
+  }, 200);
+  return {
+    done: ()=>{ fill.style.width='100%'; setTimeout(()=>document.getElementById('loadingBar').style.display='none', 400); clearInterval(iv); },
+    stop: ()=>{ clearInterval(iv); document.getElementById('loadingBar').style.display='none'; }
+  };
+}
+
+async function lerComGemini(input){
+  const file = input.files[0];
+  if(!file) return;
+
+  const key = getGeminiKey();
+  if(!key){
+    setStatus('Configure a chave API Gemini acima antes de continuar.', '#c0392b');
+    document.getElementById('geminiKey').focus();
+    input.value = '';
+    return;
+  }
+
+  setStatus('Processando...', '#999');
+  document.getElementById('geminiPreview').style.display = 'none';
+  const loader = animateLoading();
+
+  try{
+    // Converter para base64
+    const base64 = await new Promise((res, rej)=>{
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.onerror = () => rej(new Error('Erro ao ler arquivo'));
+      r.readAsDataURL(file);
+    });
+
+    const isPDF = file.type === 'application/pdf';
+    const mimeType = isPDF ? 'application/pdf' : file.type;
+
+    // Gemini 2.0 Flash — gratuito
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+
+    const body = {
+      contents:[{
+        parts:[
+          { inline_data: { mime_type: mimeType, data: base64 } },
+          { text: PROMPT_EXTRACAO }
+        ]
+      }],
+      generationConfig:{ temperature: 0, maxOutputTokens: 1024 }
+    };
+
+    const resp = await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+
+    if(!resp.ok){
+      const err = await resp.json().catch(()=>({}));
+      throw new Error(err.error?.message || 'Erro ' + resp.status);
+    }
+
+    const data = await resp.json();
+    const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const limpo = texto.replace(/```json|```/g,'').trim();
+    dadosGemini = JSON.parse(limpo);
+
+    loader.done();
+    mostrarPreviewGemini(dadosGemini);
+    setStatus('Documento lido com sucesso.', '#27ae60');
+
+  }catch(e){
+    loader.stop();
+    setStatus('Erro: ' + e.message, '#c0392b');
+    console.error(e);
+  }
+  input.value = '';
+}
+
+function mostrarPreviewGemini(d){
+  const linhas = [
+    d.logradouro && 'Logradouro: <strong>' + d.logradouro + '</strong>',
+    d.bairro_setor && 'Setor/Bairro: <strong>' + d.bairro_setor + '</strong>',
+    d.area_terreno_m2 != null && 'Área do terreno: <strong>' + Number(d.area_terreno_m2).toLocaleString('pt-BR') + ' m²</strong>',
+    d.testada_m != null && 'Testada: <strong>' + d.testada_m + ' m</strong>',
+    d.profundidade_m != null && 'Profundidade: <strong>' + d.profundidade_m + ' m</strong>',
+    d.tipo_area && 'Tipo de área: <strong>' + (TIPO_AREA_LABELS[d.tipo_area] || d.tipo_area) + '</strong>',
+    d.indice_aproveitamento != null && 'Índice: <strong>' + d.indice_aproveitamento + '×</strong>',
+    d.tdc_permitido != null && 'TDC: <strong>' + (d.tdc_permitido ? 'Permitido' : 'Não permitido') + '</strong>',
+    d.tipo_via && 'Tipo de via: <strong>' + (TIPO_VIA_LABELS[d.tipo_via] || d.tipo_via) + '</strong>',
+    d.observacoes && '<span style="color:#aaa">' + d.observacoes + '</span>',
+  ].filter(Boolean);
+  document.getElementById('geminiResultado').innerHTML = linhas.join('<br>');
+  document.getElementById('geminiPreview').style.display = 'block';
+}
+
+function aplicarGemini(){
+  aplicarDados(dadosGemini);
+  document.getElementById('geminiPreview').style.display = 'none';
+  setStatus('Formulário preenchido.', '#27ae60');
+}
+
+// Carregar chave salva ao abrir
+window.addEventListener('DOMContentLoaded', ()=>{
+  const saved = localStorage.getItem('gemini_key');
+  if(saved) document.getElementById('geminiKey').value = saved;
+});
+
+// ── JSON MANUAL (fallback) ────────────────────────────────────────────────────
+function interpretarJSON(){
+  const raw = document.getElementById('jsonInput').value.trim();
+  const st = document.getElementById('jsonStatus');
+  if(!raw){ st.textContent='Cole o JSON antes de preencher.'; st.style.color='#c0392b'; return; }
+  try{
+    const limpo = raw.replace(/```json|```/g,'').trim();
+    dadosExtraidos = JSON.parse(limpo);
+    aplicarDados(dadosExtraidos);
+    st.textContent = 'Formulário preenchido!'; st.style.color = '#27ae60';
+  }catch(e){
+    st.textContent = 'JSON inválido.'; st.style.color = '#c0392b';
+  }
+}
+
+function aplicarDados(d){
+  if(!d || !Object.keys(d).length) return;
+  if(d.logradouro){ const e=document.getElementById('rua'); if(e) e.value=d.logradouro; }
+  if(d.bairro_setor){ document.getElementById('setorSearch').value=d.bairro_setor; }
+  if(d.area_terreno_m2 != null){ const e=document.getElementById('areaTerreno'); if(e) e.value=d.area_terreno_m2; }
+  if(d.testada_m != null){ const e=document.getElementById('frente'); if(e) e.value=d.testada_m; }
+  if(d.profundidade_m != null){ const e=document.getElementById('profund'); if(e) e.value=d.profundidade_m; }
+  if(d.tipo_area){ const e=document.getElementById('catVia'); if(e){ e.value=d.tipo_area; autoCoef(); } }
+  if(d.indice_aproveitamento != null){
+    const e=document.getElementById('indAprov');
+    if(e){
+      const val=String(d.indice_aproveitamento);
+      const opt=[...e.options].find(o=>o.value===val);
+      if(opt) e.value=val;
+      else{ e.value='outro'; const c=document.getElementById('coefOutro'); if(c) c.value=val; document.getElementById('campCoefOutro').style.display='block'; }
+    }
+  }
+  if(d.tdc_permitido===true){ const e=document.getElementById('tdcAtivo'); if(e) e.checked=true; }
+  if(d.tipo_via){ const e=document.getElementById('tipoRua'); if(e) e.value=d.tipo_via; }
+  const radSim=document.querySelector('input[name="usolo"][value="sim"]');
+  if(radSim){ radSim.checked=true; toggleUsolo(); }
+  calc();
+  document.getElementById('areaTerreno').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function copiarPrompt(){
+  navigator.clipboard.writeText(PROMPT_EXTRACAO).then(()=>{
+    const btn=document.getElementById('btnCopiar');
+    if(btn){ btn.textContent='Copiado!'; setTimeout(()=>btn.textContent='Copiar prompt',2000); }
+  });
+}
+
+</script>
+</body>
+</html>
