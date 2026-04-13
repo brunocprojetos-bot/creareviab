@@ -505,6 +505,15 @@ input[type=radio],input[type=checkbox]{width:auto;border:none;accent-color:var(-
   <div class="stat"><div class="l">Vagas necessárias (+15%)</div><div class="v" id="vagasNecessarias">—</div></div>
   <div class="stat"><div class="l">Saldo de vagas</div><div class="v" id="resSaldoVagas">—</div></div>
 </div>
+<div style="margin-top:8px;padding:10px 14px;border:.5px solid #e0e0e0;border-radius:3px;background:#fff">
+  <div style="font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:8px">Composição da área do pavimento tipo</div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">
+    <div class="stat"><div class="l">Área privativa total (unid × priv)</div><div class="v" id="pavPrivTotal">—</div><div class="u">m²</div></div>
+    <div class="stat"><div class="l">Área comum por pavimento</div><div class="v" id="pavAcTotal">—</div><div class="u">m²</div></div>
+    <div class="stat" style="border:1px solid #1a1a1a"><div class="l">Área total do pav. tipo</div><div class="v" id="pavTotalComp">—</div><div class="u">m²</div></div>
+    <div class="stat"><div class="l">Área pav. tipo (50% terreno)</div><div class="v" id="areaPavTipo">—</div><div class="u">m²</div></div>
+  </div>
+</div>
 
 <!-- ÁTICO -->
 <div class="sec-label">Ático / cobertura</div>
@@ -558,6 +567,32 @@ input[type=radio],input[type=checkbox]{width:auto;border:none;accent-color:var(-
   </div>
 </div>
 
+<!-- QUADRO NBR 12721 -->
+<div class="sec-label">Quadro de áreas — NBR 12.721 / 2006</div>
+<div style="border:.5px solid #e0e0e0;border-radius:4px;overflow:hidden;margin-bottom:6px">
+  <table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead>
+      <tr style="background:#f5f5f3">
+        <th style="padding:7px 10px;text-align:left;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#999;font-weight:400;border-bottom:.5px solid #e0e0e0;width:40%">Discriminação</th>
+        <th style="padding:7px 10px;text-align:right;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#999;font-weight:400;border-bottom:.5px solid #e0e0e0">Área real (m²)</th>
+        <th style="padding:7px 10px;text-align:center;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#999;font-weight:400;border-bottom:.5px solid #e0e0e0;width:120px">Coef. equiv.</th>
+        <th style="padding:7px 10px;text-align:right;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#999;font-weight:400;border-bottom:.5px solid #e0e0e0">Área equiv. (m²)</th>
+      </tr>
+    </thead>
+    <tbody id="nbrTbody">
+    </tbody>
+    <tfoot>
+      <tr style="border-top:1px solid #1a1a1a">
+        <td style="padding:8px 10px;font-weight:500;font-size:12px;color:#1a1a1a">Área total real</td>
+        <td style="padding:8px 10px;text-align:right;font-weight:500;font-family:'DM Mono',monospace;color:#1a1a1a" id="nbrTotalReal">—</td>
+        <td></td>
+        <td style="padding:8px 10px;text-align:right;font-weight:500;font-family:'DM Mono',monospace;color:#1a1a1a" id="nbrTotalEquiv">—</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+<div style="font-size:10px;color:#aaa;margin-bottom:1.5rem">* Coeficientes de equivalência conforme NBR 12.721:2006 — ajuste conforme projeto</div>
+
 <!-- FINANCEIRO -->
 <div class="sec-label">Resumo financeiro</div>
 <div class="g4" style="margin-bottom:12px">
@@ -568,7 +603,7 @@ input[type=radio],input[type=checkbox]{width:auto;border:none;accent-color:var(-
 </div>
 <div class="fin-grid">
   <div class="fin-card"><div class="l">VGV bruto</div><div class="v" id="vgv">—</div></div>
-  <div class="fin-card"><div class="l">Custo construção</div><div class="v" id="custoCons">—</div></div>
+  <div class="fin-card"><div class="l">Custo construção (área equiv.)</div><div class="v" id="custoCons">—</div></div>
   <div class="fin-card"><div class="l">Receita líquida (39%)</div><div class="v" id="recLiq">—</div></div>
   <div class="fin-card accent"><div class="l">Margem líquida</div><div class="v" id="margem" style="font-size:20px">—</div></div>
 </div>
@@ -893,6 +928,96 @@ function copiarPrompt(){
     if(btn){ btn.textContent='Copiado!'; setTimeout(()=>btn.textContent='Copiar prompt',2000); }
   });
 }
+
+// ── QUADRO NBR 12.721:2006 ───────────────────────────────────────────────────
+// Coeficientes padrão NBR 12.721 — editáveis pelo usuário na tabela
+const NBR_DEFAULT_COEF = {
+  'Subsolo — garagem/depósito': 0.50,
+  'Garagem coberta — subsolo': 0.65,
+  'Térreo — área coberta': 1.00,
+  'Térreo — varanda/sacada coberta': 0.85,
+  'Térreo — área descoberta': 0.60,
+  'Mezanino — garagem': 0.65,
+  'Mezanino — área comum': 0.75,
+  'Pavimento tipo — área privativa': 1.00,
+  'Pavimento tipo — varanda coberta': 0.85,
+  'Pavimento tipo — área comum/hall': 0.75,
+  'Ático / cobertura — lazer': 0.75,
+  'Ático / cobertura — técnico': 0.50,
+};
+
+function buildNBR(d){
+  const items = [];
+  const add = (disc, area, coef) => { if(area > 0) items.push({disc, area, coef, id: disc.replace(/[^a-zA-Z0-9]/g,'_')}); };
+
+  // Subsolos
+  if(d.subsolos > 0) add('Subsolo — garagem/depósito', d.subsolos, 0.50);
+  // Térreo
+  if(d.terreo > 0) add('Térreo — área coberta', d.terreo, 1.00);
+  // Mezaninos
+  if(d.mezaninos > 0) add('Mezanino — garagem', d.mezaninos, 0.65);
+  // Pav tipo privativo por tipologia
+  if(d.t1a && d.privT1 > 0) add('Pavimento tipo — área privativa', d.privT1, 1.00);
+  if(d.t2a && d.privT2 > 0) add('Pavimento tipo — área privativa (tip.2)', d.privT2, 1.00);
+  if(d.t3a && d.privT3 > 0) add('Pavimento tipo — área privativa (tip.3)', d.privT3, 1.00);
+  // Áreas comuns pav tipo
+  const acTotal = d.acT1 + d.acT2 + d.acT3;
+  if(acTotal > 0) add('Pavimento tipo — área comum/hall', acTotal, 0.75);
+  // Ático
+  if(d.atico > 0) add('Ático / cobertura — lazer', d.atico, 0.75);
+
+  return items;
+}
+
+function renderNBR(items){
+  const tbody = document.getElementById('nbrTbody');
+  if(!tbody) return 0;
+  let totalReal = 0, totalEquiv = 0;
+  tbody.innerHTML = items.map(it => {
+    const equiv = it.area * it.coef;
+    totalReal += it.area;
+    totalEquiv += equiv;
+    return `<tr style="border-bottom:.5px solid #f0f0f0">
+      <td style="padding:6px 10px;color:#333">${it.disc}</td>
+      <td style="padding:6px 10px;text-align:right;font-family:'DM Mono',monospace;color:#333">${Math.round(it.area).toLocaleString('pt-BR')}</td>
+      <td style="padding:6px 10px;text-align:center">
+        <input type="number" value="${it.coef}" step="0.05" min="0" max="1"
+          style="width:70px;font-family:'DM Mono',monospace;font-size:12px;border:none;border-bottom:.5px solid #ccc;text-align:center;background:transparent;outline:none;padding:2px 0;color:#1a1a1a"
+          onchange="recalcNBR(this, ${Math.round(it.area)})" />
+      </td>
+      <td style="padding:6px 10px;text-align:right;font-family:'DM Mono',monospace;color:#1a1a1a" class="nbr-equiv-${it.disc.replace(/[^a-zA-Z0-9]/g,'_')}">${Math.round(equiv).toLocaleString('pt-BR')}</td>
+    </tr>`;
+  }).join('');
+  s('nbrTotalReal', Math.round(totalReal).toLocaleString('pt-BR') + ' m²');
+  s('nbrTotalEquiv', Math.round(totalEquiv).toLocaleString('pt-BR') + ' m²');
+  return totalEquiv;
+}
+
+function recalcNBR(input, areaReal){
+  const coef = parseFloat(input.value) || 0;
+  const equiv = Math.round(areaReal * coef);
+  // Update equiv cell in same row
+  const row = input.closest('tr');
+  if(row){
+    const cells = row.querySelectorAll('td');
+    if(cells[3]) cells[3].textContent = equiv.toLocaleString('pt-BR');
+  }
+  // Recalc totals
+  let totalReal = 0, totalEquiv = 0;
+  document.querySelectorAll('#nbrTbody tr').forEach(row => {
+    const cells = row.querySelectorAll('td');
+    if(cells[1]) totalReal += parseFloat(cells[1].textContent.replace(/\./g,'').replace(',','.')) || 0;
+    if(cells[3]) totalEquiv += parseFloat(cells[3].textContent.replace(/\./g,'').replace(',','.')) || 0;
+  });
+  s('nbrTotalReal', Math.round(totalReal).toLocaleString('pt-BR') + ' m²');
+  s('nbrTotalEquiv', Math.round(totalEquiv).toLocaleString('pt-BR') + ' m²');
+  // Recalc custo with new equiv
+  const custo = totalEquiv * n('cub');
+  s('custoCons', fBRL(custo));
+  const vgv = n('vgvM2') * parseFloat(document.getElementById('resTotalPriv')?.textContent?.replace(/\./g,'') || 0);
+  s('margem', fPct(vgv > 0 ? ((vgv - custo) / vgv) * 100 : 0));
+}
+
 
 // ── MAPA LEAFLET (OpenStreetMap — gratuito) ───────────────────────────────────
 let mapaObj = null;
